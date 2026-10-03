@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Control Manajemen SMP Kahf Islamic Boarding School</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- html2pdf for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+            .print-container { width: 100% !important; margin: 0 !important; padding: 0 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col relative">
+
+    <!-- LOGIN SCREEN OVERLAY -->
+    <div id="loginOverlay" class="fixed inset-0 bg-indigo-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-indigo-100 space-y-6">
+            <div class="text-center space-y-3">
+                <div class="inline-flex p-2 bg-indigo-50 rounded-full border border-indigo-100 shadow-sm">
+                    <!-- SVG Kahf Logo -->
+                    <svg viewBox="0 0 400 400" class="w-20 h-20 text-indigo-950">
+                        <circle cx="200" cy="200" r="185" fill="none" stroke="#1e3a8a" stroke-width="16"/>
+                        <path d="M170,60 C185,50 215,50 230,60 C245,75 235,95 200,105 C165,95 155,75 170,60 Z" fill="#1e3a8a"/>
+                        <circle cx="168" cy="78" r="8" fill="#1e3a8a"/>
+                        <circle cx="232" cy="78" r="8" fill="#1e3a8a"/>
+                        <path d="M200,130 L150,180 L200,230 L250,180 Z" fill="#1e3a8a"/>
+                        <path d="M140,120 L100,160 L160,220 L200,180 Z" fill="#1e3a8a"/>
+                        <path d="M260,120 L300,160 L240,220 L200,180 Z" fill="#1e3a8a"/>
+                        <path d="M200,230 L150,280 L200,310 L250,280 Z" fill="#1e3a8a"/>
+                        <text x="200" y="295" font-family="'Inter', sans-serif" font-weight="900" font-size="38" fill="#1e3a8a" text-anchor="middle">KAHF</text>
+                        <text x="200" y="322" font-family="'Inter', sans-serif" font-weight="800" font-size="16" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">ISLAMIC BOARDING SCHOOL</text>
+                        <text x="200" y="342" font-family="'Inter', sans-serif" font-weight="700" font-size="12" fill="#0284c7" text-anchor="middle" letter-spacing="0.5">BERTAKWA - BERAKHLAK - CERDAS</text>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-black text-slate-800 tracking-tight">PORTAL MASUK SISTEM</h2>
+                    <p class="text-xs text-slate-500 font-medium mt-1">Sistem Control Manajemen SMP Kahf Islamic Boarding School</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">USERNAME / JABATAN</label>
+                    <input type="text" id="loginUsername" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none text-xs font-semibold" placeholder="Contoh: kepsek, kurikulum, sarpras">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">KATA SANDI (PASSWORD)</label>
+                    <input type="password" id="loginPassword" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none text-xs font-semibold" placeholder="Masukkan kata sandi">
+                </div>
+
+                <div id="loginError" class="hidden p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold rounded-xl text-center">
+                    Username atau Password salah!
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl shadow-lg transition duration-200 flex items-center justify-center space-x-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    <span>MASUK KE BOARD MANAJEMEN</span>
+                </button>
+            </form>
+
+            <div class="bg-indigo-50 p-3.5 rounded-2xl border border-indigo-100 text-[11px] text-indigo-900 space-y-1.5">
+                <span class="font-bold block text-indigo-950 flex items-center gap-1">
+                    <i data-lucide="key" class="w-3.5 h-3.5 text-amber-600"></i> Akun Akses Demo:
+                </span>
+                <div class="grid grid-cols-2 gap-1 text-[10px] font-mono">
+                    <button onclick="quickFillLogin('admin', 'admin123')" class="text-left bg-white p-1.5 rounded border border-indigo-200 hover:bg-indigo-100 transition">
+                        🔑 <b>admin / admin123</b> (Kepsek/All)
+                    </button>
+                    <button onclick="quickFillLogin('kurikulum', 'kahf123')" class="text-left bg-white p-1.5 rounded border border-indigo-200 hover:bg-indigo-100 transition">
+                        🔑 <b>kurikulum / kahf123</b>
+                    </button>
+                    <button onclick="quickFillLogin('musyrif', 'kahf123')" class="text-left bg-white p-1.5 rounded border border-indigo-200 hover:bg-indigo-100 transition">
+                        🔑 <b>musyrif / kahf123</b>
+                    </button>
+                    <button onclick="quickFillLogin('operasional', 'kahf123')" class="text-left bg-white p-1.5 rounded border border-indigo-200 hover:bg-indigo-100 transition">
+                        🔑 <b>operasional / kahf123</b>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header / Navigation Bar -->
+    <header class="bg-indigo-950 text-white shadow-xl sticky top-0 z-50 border-b border-indigo-800/50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-1 bg-white rounded-xl border border-indigo-200 shadow-md flex items-center justify-center">
+                    <!-- Header Logo -->
+                    <svg viewBox="0 0 400 400" class="w-9 h-9 text-indigo-950">
+                        <circle cx="200" cy="200" r="185" fill="none" stroke="#1e3a8a" stroke-width="18"/>
+                        <path d="M170,60 C185,50 215,50 230,60 C245,75 235,95 200,105 C165,95 155,75 170,60 Z" fill="#1e3a8a"/>
+                        <circle cx="168" cy="78" r="8" fill="#1e3a8a"/>
+                        <circle cx="232" cy="78" r="8" fill="#1e3a8a"/>
+                        <path d="M200,130 L150,180 L200,230 L250,180 Z" fill="#1e3a8a"/>
+                        <path d="M140,120 L100,160 L160,220 L200,180 Z" fill="#1e3a8a"/>
+                        <path d="M260,120 L300,160 L240,220 L200,180 Z" fill="#1e3a8a"/>
+                        <path d="M200,230 L150,280 L200,310 L250,280 Z" fill="#1e3a8a"/>
+                        <text x="200" y="295" font-family="'Inter', sans-serif" font-weight="900" font-size="40" fill="#1e3a8a" text-anchor="middle">KAHF</text>
+                        <text x="200" y="322" font-family="'Inter', sans-serif" font-weight="800" font-size="16" fill="#1e3a8a" text-anchor="middle">ISLAMIC BOARDING SCHOOL</text>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white leading-tight">
+                        SISTEM CONTROL MANAJEMEN
+                    </h1>
+                    <p class="text-[11px] text-indigo-300 font-medium">SMP Kahf Islamic Boarding School (Scrum-Kanban Framework)</p>
+                </div>
+            </div>
+
+            <!-- Global Filter & User Info Bar -->
+            <div class="flex items-center flex-wrap gap-2 sm:gap-3">
+                <div class="flex items-center space-x-2 bg-indigo-900/90 px-3 py-1.5 rounded-xl border border-indigo-700/80">
+                    <i data-lucide="calendar" class="w-4 h-4 text-amber-400"></i>
+                    <label for="filterBulan" class="text-xs font-semibold text-indigo-100">BULAN:</label>
+                    <select id="filterBulan" onchange="renderAll()" class="bg-indigo-950 text-white text-xs font-medium rounded-lg px-2.5 py-1 border border-indigo-600 focus:ring-2 focus:ring-amber-400 outline-none cursor-pointer">
+                        <option value="Januari">Januari</option>
+                        <option value="Februari">Februari</option>
+                        <option value="Maret">Maret</option>
+                        <option value="April">April</option>
+                        <option value="Mei">Mei</option>
+                        <option value="Juni">Juni</option>
+                        <option value="Juli">Juli</option>
+                        <option value="Agustus">Agustus</option>
+                        <option value="September" selected>September</option>
+                        <option value="Oktober">Oktober</option>
+                        <option value="November">November</option>
+                        <option value="Desember">Desember</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center space-x-2 bg-indigo-900/90 px-3 py-1.5 rounded-xl border border-indigo-700/80">
+                    <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
+                    <label for="filterPekan" class="text-xs font-semibold text-indigo-100">SPRINT PEKAN:</label>
+                    <select id="filterPekan" onchange="renderAll()" class="bg-indigo-950 text-white text-xs font-medium rounded-lg px-2.5 py-1 border border-indigo-600 focus:ring-2 focus:ring-amber-400 outline-none cursor-pointer">
+                        <option value="ALL">Semua Pekan</option>
+                        <option value="Pekan I">Pekan I (1-7)</option>
+                        <option value="Pekan II" selected>Pekan II (8-14)</option>
+                        <option value="Pekan III">Pekan III (15-21)</option>
+                        <option value="Pekan IV">Pekan IV (22-28)</option>
+                        <option value="Pekan V">Pekan V (29-31)</option>
+                    </select>
+                </div>
+
+                <!-- Export Buttons -->
+                <div class="flex items-center space-x-1.5">
+                    <button onclick="exportToExcel()" class="flex items-center space-x-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-2.5 py-1.5 rounded-xl shadow transition" title="Export Excel">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                        <span class="hidden md:inline">Excel</span>
+                    </button>
+                    <button onclick="exportToPDF()" class="flex items-center space-x-1 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-2.5 py-1.5 rounded-xl shadow transition" title="Export PDF">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span class="hidden md:inline">PDF</span>
+                    </button>
+                </div>
+
+                <!-- User Profile & Account Action -->
+                <div class="flex items-center space-x-2 border-l border-indigo-800 pl-3 ml-1">
+                    <div class="text-right hidden sm:block">
+                        <span id="navUserName" class="text-xs font-bold block text-white">Guest</span>
+                        <span id="navUserRole" class="text-[10px] text-amber-300 block font-medium">Administrator</span>
+                    </div>
+                    <button id="btnManageUsers" onclick="openUserModal()" class="hidden p-2 bg-indigo-800 hover:bg-indigo-700 rounded-xl text-amber-300" title="Kelola Akun Staff">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="handleLogout()" class="p-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-white shadow" title="Keluar / Logout">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation Bar -->
+        <div class="bg-indigo-900/50 border-t border-indigo-800/60 overflow-x-auto custom-scrollbar">
+            <div class="max-w-7xl mx-auto px-4 flex space-x-1 py-1.5" id="tabContainer">
+                <!-- Tabs rendered dynamically -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="exportContainer" class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+        <!-- DASHBOARD VIEW -->
+        <div id="viewDashboard" class="space-y-6">
+            
+            <!-- Summary Metric Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Backlog</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="metricTotalTask" class="text-2xl font-black text-slate-800">0</span>
+                        <i data-lucide="layers" class="w-5 h-5 text-indigo-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between border-l-4 border-l-emerald-500">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Done (🟢)</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="metricDone" class="text-2xl font-black text-emerald-600">0</span>
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between border-l-4 border-l-amber-500">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">On Progress (🟡)</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="metricOnProgress" class="text-2xl font-black text-amber-600">0</span>
+                        <i data-lucide="loader" class="w-5 h-5 text-amber-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between border-l-4 border-l-rose-500">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Ready / To Do (🔴)</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="metricReady" class="text-2xl font-black text-rose-600">0</span>
+                        <i data-lucide="circle-dot" class="w-5 h-5 text-rose-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-2xl border border-rose-200 shadow-sm flex flex-col justify-between border-l-4 border-l-red-600 bg-rose-50/30">
+                    <span class="text-[10px] font-bold text-rose-700 uppercase tracking-wider">Terlambat (⚠️)</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="metricOverdue" class="text-2xl font-black text-rose-700">0</span>
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between bg-indigo-50/40">
+                    <span class="text-[10px] font-bold text-indigo-900 uppercase tracking-wider">Skala Likert</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="metricLikertScore" class="text-2xl font-black text-indigo-700">0.0 / 4</span>
+                        <i data-lucide="bar-chart" class="w-5 h-5 text-indigo-600"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between bg-gradient-to-br from-indigo-900 to-indigo-950 text-white">
+                    <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Capaian KPI (%)</span>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <span id="metricKPI" class="text-2xl font-black text-white">0.0%</span>
+                        <i data-lucide="award" class="w-5 h-5 text-amber-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Chart 1: Donut Overall Progress -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-600"></i>
+                        AKUMULASI CAPAIAN KINERJA
+                    </h3>
+                    <div class="relative flex-1 flex items-center justify-center min-h-[220px]">
+                        <canvas id="chartDonutOverall"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Status Task Distribution -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i data-lucide="donut" class="w-4 h-4 text-indigo-600"></i>
+                        PROPORSI STATUS TASK
+                    </h3>
+                    <div class="relative flex-1 flex items-center justify-center min-h-[220px]">
+                        <canvas id="chartPieStatus"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3: Sprint Velocity Trend -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i data-lucide="line-chart" class="w-4 h-4 text-indigo-600"></i>
+                        TREN VELOCITY SPRINT (PEKAN I - V)
+                    </h3>
+                    <div class="relative flex-1 flex items-center justify-center min-h-[220px]">
+                        <canvas id="chartLineSprint"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart 4: Division Comparison Bar Chart -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-600"></i>
+                    PERBANDINGAN CAPAIAN TASK PER JABATAN / DIVISI
+                </h3>
+                <div class="h-[280px]">
+                    <canvas id="chartBarDivisi"></canvas>
+                </div>
+            </div>
+
+            <!-- Performance Matrix Table -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+                    <div>
+                        <h3 class="font-extrabold text-slate-800 text-sm">MATRIKS CAPAIAN KPI & LIKERT 10 JABATAN</h3>
+                        <p class="text-xs text-slate-500">Metode Evaluasi Berbobot Proposional Likert SMP KIBS</p>
+                    </div>
+                    <span id="dashboardFilterTag" class="text-xs bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full font-bold">
+                        September - Pekan II
+                    </span>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
+                                <th class="p-3 text-center w-12">NO</th>
+                                <th class="p-3">JABATAN / DIVISI</th>
+                                <th class="p-3 text-center">TOTAL TASK</th>
+                                <th class="p-3 text-center text-emerald-700">DONE (🟢)</th>
+                                <th class="p-3 text-center text-amber-700">PROGRESS (🟡)</th>
+                                <th class="p-3 text-center text-rose-700">READY (🔴)</th>
+                                <th class="p-3 text-center text-rose-600 font-black">TERLAMBAT (⚠️)</th>
+                                <th class="p-3 text-center text-slate-500">BACKLOG (⚪)</th>
+                                <th class="p-3 text-center">STORY PTS</th>
+                                <th class="p-3 text-center">LIKERT</th>
+                                <th class="p-3 text-center text-indigo-800 font-black">SKOR KPI</th>
+                                <th class="p-3 text-center">STATUS KINERJA</th>
+                                <th class="p-3 text-center no-print">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableKPIBody" class="divide-y divide-slate-100">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                        <tfoot>
+                            <tr id="tableKPIFoot" class="bg-indigo-50/80 font-bold text-slate-800 border-t-2 border-indigo-200">
+                                <!-- Dynamic Totals -->
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPREADSHEET DETAIL VIEW (Per Division Tab) -->
+        <div id="viewSpreadsheet" class="hidden space-y-4">
+            
+            <!-- Division Header Info -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <div id="divIconBox" class="p-3 bg-indigo-100 text-indigo-700 rounded-xl">
+                        <i data-lucide="briefcase" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h2 id="divTitle" class="font-extrabold text-lg text-slate-800">TITLE</h2>
+                        <p id="divSubtitle" class="text-xs text-slate-500">Backlog & Sprint Control Board - SMP Kahf Islamic Boarding School</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-2 no-print">
+                    <button id="btnAddNewTask" onclick="openTaskModal()" class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Tambah Task Baru</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Spreadsheet Table Container -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-900 text-white font-semibold">
+                                <th class="p-3 w-10 text-center">#</th>
+                                <th class="p-3 min-w-[130px]">ASPEK BACKLOG</th>
+                                <th class="p-3 min-w-[170px]">PROBLEM IDENTIFICATION</th>
+                                <th class="p-3 min-w-[200px]">TO DO LIST (ACTION PLAN)</th>
+                                <th class="p-3 min-w-[160px]">TARGET DoD</th>
+                                <th class="p-3 min-w-[100px] text-center">PRIORITAS</th>
+                                <th class="p-3 min-w-[70px] text-center">STORY PT</th>
+                                <th class="p-3 min-w-[100px]">TGL MULAI</th>
+                                <th class="p-3 min-w-[110px]">TGL SELESAI</th>
+                                <th class="p-3 min-w-[80px]">PEKAN</th>
+                                <th class="p-3 min-w-[90px]">PIC</th>
+                                <th class="p-3 min-w-[120px]">STATUS PROGRES</th>
+                                <th class="p-3 min-w-[160px]">CATATAN / KETERANGAN</th>
+                                <th class="p-3 min-w-[160px]">CATATAN KEPSEK</th>
+                                <th class="p-3 min-w-[90px] text-center no-print">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="spreadsheetBody" class="divide-y divide-slate-200 bg-white">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Add/Edit Task -->
+    <div id="modalTask" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modalTaskTitle" class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-indigo-600"></i>
+                    TAMBAH SPRINT TASK BARU
+                </h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="formTask" onsubmit="saveTask(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="taskId">
+                
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">ASPEK BACKLOG</label>
+                    <input type="text" id="inputAspek" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Contoh: KURIKULUM PROSES / MAINTENANCE AC">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">PROBLEM IDENTIFICATION (BACKLOG)</label>
+                    <textarea id="inputProblem" rows="2" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Masalah atau latar belakang yang perlu diselesaikan"></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">TO DO LIST (CORRECTIVE ACTION PLAN)</label>
+                    <textarea id="inputAction" required rows="2" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Rencana aksi nyata yang akan dilakukan"></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">DEFINITION OF DONE (Target DoD)</label>
+                    <input type="text" id="inputDoD" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Target terukur, misal: 80% tuntas / 100% terdata">
+                </div>
+
+                <!-- Priority & Story Point Fields -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">PRIORITAS TUGAS</label>
+                        <select id="inputPriority" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-semibold">
+                            <option value="Tinggi">🔴 Tinggi (High Impact)</option>
+                            <option value="Sedang" selected>🟡 Sedang (Medium)</option>
+                            <option value="Rendah">🟢 Rendah (Low)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">STORY POINT (FIBONACCI)</label>
+                        <select id="inputStoryPoints" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-semibold">
+                            <option value="1">1 Point (Sangat Kecil)</option>
+                            <option value="2">2 Points (Kecil)</option>
+                            <option value="3" selected>3 Points (Sedang)</option>
+                            <option value="5">5 Points (Besar)</option>
+                            <option value="8">8 Points (Sangat Besar)</option>
+                            <option value="13">13 Points (Kompleks)</option>
+                            <option value="21">21 Points (Epic / Ekstrem)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Date fields -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">TANGGAL MULAI</label>
+                        <input type="date" id="inputStartDate" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">TANGGAL SELESAI</label>
+                        <input type="date" id="inputEndDate" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">PIC (PENANGGUNG JAWAB)</label>
+                        <input type="text" id="inputPIC" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Nama / Tim PIC">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">STATUS PROGRES</label>
+                        <select id="inputStatus" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-bold">
+                            <option value="Ready">🔴 Ready / To Do</option>
+                            <option value="On Progress">🟡 On Progress</option>
+                            <option value="Done">🟢 Done</option>
+                            <option value="Backlog">⚪ Backlog</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">CATATAN / KETERANGAN DEPARTEMEN (Sertakan Link URL jika ada)</label>
+                    <textarea id="inputNoteDept" rows="2" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Link drive, dokumen, https://..."></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">CATATAN KEPSEK / EVALUASI PEKANAN</label>
+                    <textarea id="inputNoteKepsek" rows="2" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Feedback & instruksi Pimpinan / Kepsek"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-3 border-t">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg font-semibold hover:bg-slate-200">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700">Simpan Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Alert Notification Modal -->
+    <div id="customAlertModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
+            <div class="p-3 bg-amber-100 text-amber-700 rounded-full w-12 h-12 mx-auto flex items-center justify-center">
+                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+            </div>
+            <h4 id="customAlertTitle" class="font-extrabold text-slate-800 text-sm">PEMBERITAHUAN</h4>
+            <p id="customAlertMessage" class="text-xs text-slate-600 leading-relaxed"></p>
+            <button onclick="closeCustomAlert()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow">
+                Mengerti & Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Dialog Modal -->
+    <div id="customConfirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
+            <div class="p-3 bg-rose-100 text-rose-700 rounded-full w-12 h-12 mx-auto flex items-center justify-center">
+                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+            </div>
+            <h4 id="customConfirmTitle" class="font-extrabold text-slate-800 text-sm">KONFIRMASI</h4>
+            <p id="customConfirmMessage" class="text-xs text-slate-600 leading-relaxed"></p>
+            <div class="flex space-x-2 pt-2">
+                <button onclick="closeCustomConfirm(false)" class="w-1/2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">Batal</button>
+                <button onclick="closeCustomConfirm(true)" class="w-1/2 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Account / User Management (Admin Only) -->
+    <div id="modalUsers" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                    <i data-lucide="users" class="w-4 h-4 text-indigo-600"></i>
+                    MANAJEMEN AKUN PENGAWAS & JABATAN
+                </h3>
+                <button onclick="closeUserModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-bold border-b">
+                            <th class="p-2.5">USERNAME</th>
+                            <th class="p-2.5">NAMA AKUN</th>
+                            <th class="p-2.5">JABATAN / AKSES</th>
+                            <th class="p-2.5">PASSWORD</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody" class="divide-y divide-slate-100">
+                        <!-- Rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-end pt-2 border-t">
+                <button onclick="closeUserModal()" class="px-4 py-2 bg-slate-800 text-white text-xs font-semibold rounded-lg hover:bg-slate-900">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // System Roles Definition
+        const rolesList = [
+            { id: "DASHBOARD", name: "DASHBOARD UTAMA", icon: "layout-dashboard" },
+            { id: "KURIKULUM", name: "WAKASEK KURIKULUM", icon: "book-open" },
+            { id: "KESISWAAN", name: "WAKASEK KESISWAAN", icon: "trophy" },
+            { id: "SARPRAS", name: "KA. SARPRAS", icon: "wrench" },
+            { id: "MUSYRIF", name: "KOOR. MUSYRIF", icon: "home" },
+            { id: "OPERASIONAL", name: "KA. OPERASIONAL", icon: "utensils" },
+            { id: "CONTENT", name: "CONTENT CREATOR", icon: "video" },
+            { id: "PPDB", name: "TIM PPDB", icon: "users" },
+            { id: "KEUANGAN", name: "ADMIN KEUANGAN", icon: "wallet" },
+            { id: "OPERATOR", name: "OPERATOR SEKOLAH", icon: "cpu" },
+            { id: "UKS", name: "PJ UKS", icon: "activity" }
+        ];
+
+        // User Accounts Credentials Data
+        let usersData = [
+            { username: "admin", name: "Kepsek", role: "ALL", password: "admin123" },
+            { username: "kepsek", name: "Kepsek", role: "ALL", password: "admin123" },
+            { username: "kurikulum", name: "Waka Kurikulum", role: "KURIKULUM", password: "kahf123" },
+            { username: "kesiswaan", name: "Waka Kesiswaan", role: "KESISWAAN", password: "kahf123" },
+            { username: "sarpras", name: "Ka. Sarpras", role: "SARPRAS", password: "kahf123" },
+            { username: "musyrif", name: "Koor. Musyrif", role: "MUSYRIF", password: "kahf123" },
+            { username: "operasional", name: "Ka. Operasional", role: "OPERASIONAL", password: "kahf123" },
+            { username: "content", name: "Content Creator", role: "CONTENT", password: "kahf123" },
+            { username: "ppdb", name: "Tim PPDB", role: "PPDB", password: "kahf123" },
+            { username: "keuangan", name: "Admin Keuangan", role: "KEUANGAN", password: "kahf123" },
+            { username: "operator", name: "Operator Sekolah", role: "OPERATOR", password: "kahf123" },
+            { username: "uks", name: "PJ UKS", role: "UKS", password: "kahf123" }
+        ];
+
+        // Currently Logged In User State
+        let currentUser = null;
+        let confirmCallback = null;
+
+        // Sample Operational Tasks Data
+        let tasksData = [
+            // Kurikulum
+            { id: 1, role: "KURIKULUM", aspek: "KURIKULUM PROSES", problem: "90% peserta didik belum mampu faktor prima & KPK FPB", action: "1. Remedial scaffolding visual\n2. Praktik PBL KPK/FPB", dod: "80% santri tuntas materi KPK/FPB", priority: "Tinggi", storyPoints: 5, startDate: "2026-09-01", endDate: "2026-09-11", bulan: "September", pekan: "Pekan II", pic: "Guru Math", status: "Done", noteDept: "PROTA PROSEM: https://drive.google.com/drive/folders/1S2UefNI11a0HhLR0VqPEh3n1FFxvaf1l", noteKepsek: "Persiapan Bimbel internal OSN (Oktober)" },
+            { id: 2, role: "KURIKULUM", aspek: "KURIKULUM PROSES", problem: "Ketertinggalan materi Matematika 50% dari prosem", action: "Percepatan materi & analisa kritis agenda kelas", dod: "Sesuai target KKTP & Prosem", priority: "Tinggi", storyPoints: 8, startDate: "2026-09-08", endDate: "2026-09-14", bulan: "September", pekan: "Pekan II", pic: "Guru Math", status: "On Progress", noteDept: "Rekap prosem berjalan 50%", noteKepsek: "Follow up KSP maksimal pekan ini" },
+            { id: 3, role: "KURIKULUM", aspek: "SUPERVISI GURU", problem: "Kedisiplinan guru belum 100% tepat waktu", action: "Supervisi akademik kelas & evaluasi kehadiran", dod: "100% guru tersupervisi", priority: "Sedang", storyPoints: 3, startDate: "2026-09-15", endDate: "2026-09-18", bulan: "September", pekan: "Pekan III", pic: "Waka Kurikulum", status: "Ready", noteDept: "Form supervisi siap", noteKepsek: "Gelar rapat pembinaan guru" },
+
+            // Kesiswaan
+            { id: 4, role: "KESISWAAN", aspek: "EKSTRAKURIKULER", problem: "Belum ada ranking & tim inti ekskul beregu", action: "Membuat tim inti dan pemetaan rangking ekskul", dod: "90% ekskul memiliki tim inti", priority: "Sedang", storyPoints: 5, startDate: "2026-09-01", endDate: "2026-09-12", bulan: "September", pekan: "Pekan II", pic: "Kesiswaan", status: "Done", noteDept: "Link data tim ekskul: https://docs.google.com/spreadsheets/d/1gASsiTINIbWUnbQzurUUvRhQtwO7e7f", noteKepsek: "Presentasi video robotik ke komite" },
+            { id: 5, role: "KESISWAAN", aspek: "KOKURIKULER", problem: "Revisi proposal Kahf Festival (Kyfest)", action: "Perbaikan RAB internal & booklet sponsorship", dod: "100% proposal & RAB tuntas", priority: "Tinggi", storyPoints: 8, startDate: "2026-09-15", endDate: "2026-09-25", bulan: "September", pekan: "Pekan IV", pic: "Panitia Kyfest", status: "On Progress", noteDept: "Scrum Kyfest: https://docs.google.com/spreadsheets/d/15wqi5jFvF1GRg28", noteKepsek: "Agenda renang & parenting dipastikan" },
+
+            // Sarpras
+            { id: 6, role: "SARPRAS", aspek: "INVENTARISIR", problem: "Labelisasi inventaris aset sekolah", action: "Cetak & pasang stiker label inventaris", dod: "100% inventaris terpasang stiker", priority: "Sedang", storyPoints: 3, startDate: "2026-09-01", endDate: "2026-09-12", bulan: "September", pekan: "Pekan II", pic: "Ka. Sarpras", status: "Done", noteDept: "Dokumen aset: https://docs.google.com/document/d/1WjXTCaR9Ax1HCh5OvBwCoMaOkpAZidszl", noteKepsek: "Lanjutkan CCTV & Pos Satpam" },
+            { id: 7, role: "SARPRAS", aspek: "MAINTENANCE", problem: "Cuci rutin AC Asrama & Kelas", action: "Penjadwalan & pelaksanaan pembersihan AC", dod: "AC bersih & dingin 100%", priority: "Tinggi", storyPoints: 5, startDate: "2026-09-08", endDate: "2026-09-15", bulan: "September", pekan: "Pekan III", pic: "Ka. Sarpras", status: "Done", noteDept: "6 AC Asrama selesai", noteKepsek: "Pengadaan freezer dapur" },
+
+            // Musyrif
+            { id: 8, role: "MUSYRIF", aspek: "Tahfizh & Mutun", problem: "Ketertinggalan target hafalan santri kelas 9 & 8", action: "Karantina Akademik Tahfizh & setoran malam", dod: "Target tuntas & Tasmi berjalan", priority: "Tinggi", storyPoints: 8, startDate: "2026-09-01", endDate: "2026-09-14", bulan: "September", pekan: "Pekan II", pic: "Musyrif Halaqah", status: "On Progress", noteDept: "Progres Tasmi santri berjalan", noteKepsek: "Tulis rata-rata capaian pekanan" },
+            { id: 9, role: "MUSYRIF", aspek: "Bahasa & Budaya", problem: "Bahasa Arab harian belum konsisten", action: "Kunci perizinan harian wajib Bahasa Arab", dod: "Santri terbiasa izin B. Arab", priority: "Sedang", storyPoints: 3, startDate: "2026-09-01", endDate: "2026-09-07", bulan: "September", pekan: "Pekan I", pic: "Ust. Febry", status: "Done", noteDept: "Efektifitas meningkat pesat", noteKepsek: "Pertahankan konsistensi" },
+
+            // Operasional
+            { id: 10, role: "OPERASIONAL", aspek: "DAPUR & GIZI", problem: "Kualitas rasa masakan belum terstandar", action: "Pembuatan gramasi bahan & timbangan dapur", dod: "Rasa terstandar & higienis", priority: "Tinggi", storyPoints: 5, startDate: "2026-09-01", endDate: "2026-09-12", bulan: "September", pekan: "Pekan II", pic: "Awi Rambe", status: "Done", noteDept: "SOP Gramasi: https://drive.google.com/file/d/1xXtJywqVCwmmEW8a4Au7-CW5FJXNqx0v", noteKepsek: "Laporan keuangan kantin & laundry" },
+
+            // Content Creator
+            { id: 11, role: "CONTENT", aspek: "PUBLIKASI MEDSOS", problem: "Target harian publikasi media sosial", action: "Produksi 1 hari 2 konten video & feed", dod: "Kalender konten terisi 100%", priority: "Sedang", storyPoints: 3, startDate: "2026-09-01", endDate: "2026-09-12", bulan: "September", pekan: "Pekan II", pic: "PJ Medsos", status: "Done", noteDept: "Bank foto & video terupdate", noteKepsek: "Sesuaikan kaldik dengan agenda" },
+
+            // PPDB
+            { id: 12, role: "PPDB", aspek: "PPDB & INFO", problem: "Memperbanyak CP terdata di WhatsApp PPDB", action: "Arahkan CP dari Medsos & Follow up H+1/3/7", dod: "200 kontak CP masuk / bulan", priority: "Tinggi", storyPoints: 5, startDate: "2026-09-01", endDate: "2026-09-10", bulan: "September", pekan: "Pekan II", pic: "Tim PPDB", status: "Done", noteDept: "Respon cepat < 5 menit", noteKepsek: "Maksimalkan roadshow SDIT" },
+
+            // Keuangan
+            { id: 13, role: "KEUANGAN", aspek: "SPP & BILLING", problem: "Reminder pembayaran SPP & BPM September", action: "Broadcast reminder SPP tanggal 1, 5, 10, 15", dod: "Pembayaran terdata 80%+", priority: "Tinggi", storyPoints: 5, startDate: "2026-09-01", endDate: "2026-09-10", bulan: "September", pekan: "Pekan II", pic: "Keuangan", status: "Done", noteDept: "Data Billing: https://docs.google.com/spreadsheets/d/11vBtNnSwyigjR43NUEnRmCNopxB4YUTn", noteKepsek: "Audit laporan kantin & dapur" },
+
+            // Operator
+            { id: 14, role: "OPERATOR", aspek: "DAPODIK & APLIKASI", problem: "Input siswa baru ke Dapodik & e-Rapor 2026", action: "Tarik data spdatadik & sinkronisasi", dod: "100% siswa terdata tanpa residu", priority: "Tinggi", storyPoints: 3, startDate: "2026-09-01", endDate: "2026-09-07", bulan: "September", pekan: "Pekan I", pic: "Operator", status: "Done", noteDept: "Aplikasi Sakha & Imadani sync", noteKepsek: "Cek e-Ijazah angkatan II" },
+
+            // UKS
+            { id: 15, role: "UKS", aspek: "PELAYANAN KESEHATAN", problem: "Pencegahan ISPA/Campak pasca wabah", action: "Edukasi PHBS, sterilisasi asrama, jemur kasur", dod: "100% santri teredukasi & sehat", priority: "Sedang", storyPoints: 3, startDate: "2026-09-01", endDate: "2026-09-07", bulan: "September", pekan: "Pekan I", pic: "UKS", status: "Done", noteDept: "Terekam di APK SAKHA", noteKepsek: "MCU 3 bulanan dengan Puskesmas" }
+        ];
+
+        let activeTab = "DASHBOARD";
+        let chartDonut, chartPie, chartLine, chartBar;
+
+        function showCustomAlert(msg, title = "PEMBERITAHUAN") {
+            document.getElementById("customAlertTitle").innerText = title;
+            document.getElementById("customAlertMessage").innerText = msg;
+            document.getElementById("customAlertModal").classList.remove("hidden");
+        }
+
+        function closeCustomAlert() {
+            document.getElementById("customAlertModal").classList.add("hidden");
+        }
+
+        function showCustomConfirm(msg, callback, title = "KONFIRMASI") {
+            document.getElementById("customConfirmTitle").innerText = title;
+            document.getElementById("customConfirmMessage").innerText = msg;
+            confirmCallback = callback;
+            document.getElementById("customConfirmModal").classList.remove("hidden");
+        }
+
+        function closeCustomConfirm(result) {
+            document.getElementById("customConfirmModal").classList.add("hidden");
+            if (confirmCallback) {
+                confirmCallback(result);
+                confirmCallback = null;
+            }
+        }
+
+        function quickFillLogin(u, p) {
+            document.getElementById("loginUsername").value = u;
+            document.getElementById("loginPassword").value = p;
+        }
+
+        function handleLogin(e) {
+            if (e) e.preventDefault();
+            const uInput = document.getElementById("loginUsername").value.trim().toLowerCase();
+            const pInput = document.getElementById("loginPassword").value.trim();
+
+            const foundUser = usersData.find(u => 
+                (u.username.toLowerCase() === uInput || u.role.toLowerCase() === uInput || u.name.toLowerCase() === uInput) && 
+                u.password === pInput
+            );
+
+            if (foundUser) {
+                currentUser = foundUser;
+                document.getElementById("loginError").classList.add("hidden");
+                document.getElementById("loginOverlay").classList.add("hidden");
+                updateUIForUser();
+                renderAll();
+            } else {
+                document.getElementById("loginError").classList.remove("hidden");
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById("loginOverlay").classList.remove("hidden");
+            document.getElementById("loginUsername").value = "";
+            document.getElementById("loginPassword").value = "";
+            document.getElementById("loginError").classList.add("hidden");
+        }
+
+        function updateUIForUser() {
+            if (!currentUser) return;
+            document.getElementById("navUserName").innerText = currentUser.name;
+            document.getElementById("navUserRole").innerText = currentUser.role === "ALL" ? "Pimpinan (Kepsek)" : currentUser.role;
+
+            const btnUserMgmt = document.getElementById("btnManageUsers");
+            if (currentUser.role === "ALL") {
+                btnUserMgmt.classList.remove("hidden");
+            } else {
+                btnUserMgmt.classList.add("hidden");
+            }
+        }
+
+        // Helper: Check if active task can be edited
+        function canUserEditActiveRole() {
+            if (!currentUser) return false;
+            if (currentUser.role === "ALL") return true; // Kepsek/Admin edits all
+            return currentUser.role === activeTab; // Staff edit only own department
+        }
+
+        // Helper: Check if task is overdue
+        function checkTaskOverdue(task) {
+            if (!task || !task.endDate || task.status === "Done") return false;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const taskEndDate = new Date(task.endDate);
+            return taskEndDate < today;
+        }
+
+        function getFilteredTasks(roleFilter = null) {
+            const bulan = document.getElementById("filterBulan").value;
+            const pekan = document.getElementById("filterPekan").value;
+
+            return tasksData.filter(t => {
+                const matchRole = roleFilter ? t.role === roleFilter : true;
+                const matchBulan = t.bulan === bulan;
+                const matchPekan = pekan === "ALL" ? true : t.pekan === pekan;
+                return matchRole && matchBulan && matchPekan;
+            });
+        }
+
+        // Weighted Proportional Likert Score Calculation
+        function calculateProportionalKPI(taskList) {
+            if (!taskList || taskList.length === 0) {
+                return { totalTasks: 0, totalPts: 0, likertAvg: "0.0", kpiPct: 0 };
+            }
+
+            // Likert Map: Backlog=1, Ready=2, On Progress=3, Done=4
+            const likertWeight = { "Backlog": 1, "Ready": 2, "On Progress": 3, "Done": 4 };
+            
+            let totalWeightedScore = 0;
+            let totalStoryPoints = 0;
+
+            taskList.forEach(t => {
+                const points = parseInt(t.storyPoints) || 3;
+                const lVal = likertWeight[t.status] || 2;
+                totalWeightedScore += (lVal * points);
+                totalStoryPoints += points;
+            });
+
+            if (totalStoryPoints === 0) return { totalTasks: taskList.length, totalPts: 0, likertAvg: "0.0", kpiPct: 0 };
+
+            const likertAvg = (totalWeightedScore / totalStoryPoints).toFixed(1);
+            // Convert Likert 1.0 - 4.0 scale to 0 - 100% KPI score
+            const kpiPct = Math.min(100, Math.max(0, ((likertAvg - 1) / 3) * 100));
+
+            return {
+                totalTasks: taskList.length,
+                totalPts: totalStoryPoints,
+                likertAvg: likertAvg,
+                kpiPct: parseFloat(kpiPct.toFixed(1))
+            };
+        }
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            const viewDash = document.getElementById("viewDashboard");
+            const viewSpread = document.getElementById("viewSpreadsheet");
+
+            if (activeTab === "DASHBOARD") {
+                viewDash.classList.remove("hidden");
+                viewSpread.classList.add("hidden");
+            } else {
+                viewDash.classList.add("hidden");
+                viewSpread.classList.remove("hidden");
+            }
+
+            renderAll();
+        }
+
+        function renderTabs() {
+            const container = document.getElementById("tabContainer");
+            container.innerHTML = rolesList.map(r => `
+                <button onclick="switchTab('${r.id}')" class="flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${activeTab === r.id ? 'bg-amber-400 text-indigo-950 shadow-md' : 'text-indigo-200 hover:bg-indigo-900 hover:text-white'}">
+                    <i data-lucide="${r.icon}" class="w-3.5 h-3.5"></i>
+                    <span>${r.name}</span>
+                </button>
+            `).join("");
+            lucide.createIcons();
+        }
+
+        function renderAll() {
+            renderTabs();
+            if (activeTab === "DASHBOARD") {
+                renderDashboard();
+            } else {
+                renderSpreadsheet();
+            }
+        }
+
+        function renderDashboard() {
+            const bulan = document.getElementById("filterBulan").value;
+            const pekan = document.getElementById("filterPekan").value;
+            document.getElementById("dashboardFilterTag").innerText = `${bulan} - ${pekan === "ALL" ? "Semua Pekan" : pekan}`;
+
+            const activeRoles = rolesList.filter(r => r.id !== "DASHBOARD");
+            const filteredAll = getFilteredTasks();
+
+            let totalTasks = filteredAll.length;
+            let doneTasks = filteredAll.filter(t => t.status === "Done").length;
+            let onProgressTasks = filteredAll.filter(t => t.status === "On Progress").length;
+            let readyTasks = filteredAll.filter(t => t.status === "Ready").length;
+            let overdueTasks = filteredAll.filter(t => checkTaskOverdue(t)).length;
+
+            const overallCalc = calculateProportionalKPI(filteredAll);
+
+            document.getElementById("metricTotalTask").innerText = totalTasks;
+            document.getElementById("metricDone").innerText = doneTasks;
+            document.getElementById("metricOnProgress").innerText = onProgressTasks;
+            document.getElementById("metricReady").innerText = readyTasks;
+            document.getElementById("metricOverdue").innerText = overdueTasks;
+            document.getElementById("metricLikertScore").innerText = `${overallCalc.likertAvg} / 4`;
+            document.getElementById("metricKPI").innerText = `${overallCalc.kpiPct}%`;
+
+            // Matrix KPI Table
+            const tbody = document.getElementById("tableKPIBody");
+            let sumTotal = 0, sumDone = 0, sumProg = 0, sumReady = 0, sumOverdue = 0, sumBacklog = 0, sumPoints = 0, sumKPI = 0;
+
+            tbody.innerHTML = activeRoles.map((role, idx) => {
+                const roleTasks = getFilteredTasks(role.id);
+                const rTotal = roleTasks.length;
+                const rDone = roleTasks.filter(t => t.status === "Done").length;
+                const rProg = roleTasks.filter(t => t.status === "On Progress").length;
+                const rReady = roleTasks.filter(t => t.status === "Ready").length;
+                const rOverdue = roleTasks.filter(t => checkTaskOverdue(t)).length;
+                const rBacklog = roleTasks.filter(t => t.status === "Backlog").length;
+
+                const calc = calculateProportionalKPI(roleTasks);
+
+                sumTotal += rTotal;
+                sumDone += rDone;
+                sumProg += rProg;
+                sumReady += rReady;
+                sumOverdue += rOverdue;
+                sumBacklog += rBacklog;
+                sumPoints += calc.totalPts;
+                sumKPI += calc.kpiPct;
+
+                let badgeClass = "bg-rose-100 text-rose-700";
+                let badgeText = "NEED ATTENTION 🔴";
+                if (calc.kpiPct >= 85) { badgeClass = "bg-emerald-100 text-emerald-700"; badgeText = "EXCELLENT 🟢"; }
+                else if (calc.kpiPct >= 70) { badgeClass = "bg-amber-100 text-amber-700"; badgeText = "GOOD 🟡"; }
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 text-center font-medium text-slate-500">${idx + 1}</td>
+                        <td class="p-3 font-semibold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="${role.icon}" class="w-3.5 h-3.5 text-indigo-600"></i>
+                            ${role.name}
+                        </td>
+                        <td class="p-3 text-center font-semibold">${rTotal}</td>
+                        <td class="p-3 text-center text-emerald-600 font-bold">${rDone}</td>
+                        <td class="p-3 text-center text-amber-600 font-bold">${rProg}</td>
+                        <td class="p-3 text-center text-rose-600 font-bold">${rReady}</td>
+                        <td class="p-3 text-center font-black ${rOverdue > 0 ? 'text-rose-600 bg-rose-50' : 'text-slate-400'}">${rOverdue > 0 ? `⚠️ ${rOverdue}` : '0'}</td>
+                        <td class="p-3 text-center text-slate-400 font-semibold">${rBacklog}</td>
+                        <td class="p-3 text-center font-mono text-slate-600 font-bold">${calc.totalPts} pts</td>
+                        <td class="p-3 text-center font-bold text-indigo-700">${calc.likertAvg}</td>
+                        <td class="p-3 text-center font-black text-indigo-950">${calc.kpiPct.toFixed(1)}%</td>
+                        <td class="p-3 text-center">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClass}">${badgeText}</span>
+                        </td>
+                        <td class="p-3 text-center no-print">
+                            <button onclick="switchTab('${role.id}')" class="text-indigo-600 hover:text-indigo-900 font-bold underline">Buka Board</button>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+
+            const avgKPI = overallCalc.kpiPct.toFixed(1);
+
+            document.getElementById("tableKPIFoot").innerHTML = `
+                <td class="p-3 text-center" colspan="2">AKUMULASI PROPOSIONAL LIKERT</td>
+                <td class="p-3 text-center">${sumTotal}</td>
+                <td class="p-3 text-center text-emerald-700">${sumDone}</td>
+                <td class="p-3 text-center text-amber-700">${sumProg}</td>
+                <td class="p-3 text-center text-rose-700">${sumReady}</td>
+                <td class="p-3 text-center text-rose-600 font-black">${sumOverdue > 0 ? `⚠️ ${sumOverdue}` : '0'}</td>
+                <td class="p-3 text-center text-slate-500">${sumBacklog}</td>
+                <td class="p-3 text-center font-mono">${sumPoints} pts</td>
+                <td class="p-3 text-center text-indigo-800">${overallCalc.likertAvg}</td>
+                <td class="p-3 text-center text-indigo-950 font-black">${avgKPI}%</td>
+                <td class="p-3 text-center" colspan="2">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold ${avgKPI >= 85 ? 'bg-emerald-200 text-emerald-800' : 'bg-amber-200 text-amber-800'}">
+                        ${avgKPI >= 85 ? 'EXCELLENT PERFORMANCE 🟢' : 'GOOD ON TRACK 🟡'}
+                    </span>
+                </td>
+            `;
+
+            lucide.createIcons();
+            renderCharts(sumDone, sumProg, sumReady, activeRoles);
+        }
+
+        function renderSpreadsheet() {
+            const roleObj = rolesList.find(r => r.id === activeTab);
+            document.getElementById("divTitle").innerText = roleObj.name;
+            document.getElementById("divSubtitle").innerText = `Scrum-Kanban Backlog Board - ${document.getElementById("filterBulan").value}`;
+            document.getElementById("divIconBox").innerHTML = `<i data-lucide="${roleObj.icon}" class="w-6 h-6"></i>`;
+
+            const canEdit = canUserEditActiveRole();
+            const btnAdd = document.getElementById("btnAddNewTask");
+            if (canEdit) {
+                btnAdd.classList.remove("hidden");
+            } else {
+                btnAdd.classList.add("hidden");
+            }
+
+            const filteredTasks = getFilteredTasks(activeTab);
+            const tbody = document.getElementById("spreadsheetBody");
+
+            if (filteredTasks.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="15" class="p-8 text-center text-slate-400">
+                            <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                            <span>Tidak ada task terdaftar untuk periode ${document.getElementById("filterBulan").value} - ${document.getElementById("filterPekan").value}</span>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = filteredTasks.map((t, idx) => {
+                    const isOverdue = checkTaskOverdue(t);
+                    return `
+                    <tr class="hover:bg-slate-50 transition align-top ${isOverdue ? 'bg-rose-50/40' : ''}">
+                        <td class="p-3 text-center font-medium text-slate-400">${idx + 1}</td>
+                        <td class="p-3 font-semibold text-indigo-900">${t.aspek}</td>
+                        <td class="p-3 text-slate-600 whitespace-pre-line">${t.problem || '-'}</td>
+                        <td class="p-3 text-slate-800 font-medium whitespace-pre-line">${t.action}</td>
+                        <td class="p-3 text-slate-700 bg-slate-50/50 border-x border-slate-100 whitespace-pre-line">${t.dod}</td>
+                        <td class="p-3 text-center">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${getPriorityStyle(t.priority)}">${t.priority || 'Sedang'}</span>
+                        </td>
+                        <td class="p-3 text-center font-mono font-bold text-slate-700">${t.storyPoints || 3} pts</td>
+                        <td class="p-3 text-slate-600 font-mono text-[11px]">${t.startDate || '-'}</td>
+                        <td class="p-3 font-mono text-[11px] ${isOverdue ? 'text-rose-700 font-bold' : 'text-slate-600'}">
+                            ${t.endDate || '-'}
+                            ${isOverdue ? '<span class="block text-[9px] text-rose-600 font-black tracking-tight mt-0.5">⚠️ TERLAMBAT</span>' : ''}
+                        </td>
+                        <td class="p-3 text-slate-600 font-semibold">${t.pekan}</td>
+                        <td class="p-3 text-slate-700 font-medium">${t.pic}</td>
+                        <td class="p-3">
+                            ${canEdit ? `
+                            <select onchange="updateStatus(${t.id}, this.value)" class="text-xs font-bold rounded-lg px-2 py-1 outline-none cursor-pointer border ${getStatusStyle(t.status)}">
+                                <option value="Ready" ${t.status === 'Ready' ? 'selected' : ''}>🔴 Ready</option>
+                                <option value="On Progress" ${t.status === 'On Progress' ? 'selected' : ''}>🟡 On Progress</option>
+                                <option value="Done" ${t.status === 'Done' ? 'selected' : ''}>🟢 Done</option>
+                                <option value="Backlog" ${t.status === 'Backlog' ? 'selected' : ''}>⚪ Backlog</option>
+                            </select>
+                            ` : `
+                            <span class="px-2 py-1 rounded-lg text-xs font-bold border inline-block ${getStatusStyle(t.status)}">${t.status}</span>
+                            `}
+                        </td>
+                        <td class="p-3 text-slate-600 italic text-[11px] whitespace-pre-line">${autoLink(t.noteDept)}</td>
+                        <td class="p-3 text-amber-900 bg-amber-50/40 text-[11px] font-medium whitespace-pre-line">${autoLink(t.noteKepsek)}</td>
+                        <td class="p-3 text-center space-x-1 no-print">
+                            ${canEdit ? `
+                            <button onclick="editTask(${t.id})" class="p-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition" title="Edit Task">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button onclick="deleteTask(${t.id})" class="p-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg transition" title="Hapus Task">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                            ` : `
+                            <span class="text-[10px] text-slate-400 font-medium italic">Read-Only</span>
+                            `}
+                        </td>
+                    </tr>
+                `}).join("");
+            }
+
+            lucide.createIcons();
+        }
+
+        function renderCharts(done, prog, ready, activeRoles) {
+            // Chart 1: Donut Overall
+            if (chartDonut) chartDonut.destroy();
+            const ctxDonut = document.getElementById("chartDonutOverall").getContext("2d");
+            const filteredAll = getFilteredTasks();
+            const overallCalc = calculateProportionalKPI(filteredAll);
+
+            chartDonut = new Chart(ctxDonut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Capaian KPI', 'Selisih Target'],
+                    datasets: [{
+                        data: [overallCalc.kpiPct, Math.max(0, 100 - overallCalc.kpiPct)],
+                        backgroundColor: ['#10b981', '#e2e8f0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    cutout: '75%'
+                }
+            });
+
+            // Chart 2: Pie Status
+            if (chartPie) chartPie.destroy();
+            const ctxPie = document.getElementById("chartPieStatus").getContext("2d");
+            chartPie = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: ['Done (🟢)', 'On Progress (🟡)', 'Ready (🔴)'],
+                    datasets: [{
+                        data: [done, prog, ready],
+                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Chart 3: Line Sprint Velocity Trend
+            if (chartLine) chartLine.destroy();
+            const ctxLine = document.getElementById("chartLineSprint").getContext("2d");
+            const bulan = document.getElementById("filterBulan").value;
+            const pekanList = ["Pekan I", "Pekan II", "Pekan III", "Pekan IV", "Pekan V"];
+
+            const velocityData = pekanList.map(p => {
+                const tasksInPekan = tasksData.filter(t => t.bulan === bulan && t.pekan === p);
+                return calculateProportionalKPI(tasksInPekan).kpiPct;
+            });
+
+            chartLine = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: pekanList,
+                    datasets: [{
+                        label: 'KPI Velocity (%)',
+                        data: velocityData,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { min: 0, max: 100 } }
+                }
+            });
+
+            // Chart 4: Bar Comparison per Division
+            if (chartBar) chartBar.destroy();
+            const ctxBar = document.getElementById("chartBarDivisi").getContext("2d");
+            
+            const labels = activeRoles.map(r => r.name.replace("WAKASEK ", "").replace("KA. ", ""));
+            const doneData = activeRoles.map(r => {
+                const rTasks = getFilteredTasks(r.id);
+                return rTasks.filter(t => t.status === "Done").length;
+            });
+            const totalData = activeRoles.map(r => getFilteredTasks(r.id).length);
+
+            chartBar = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Task Selesai (Done)', data: doneData, backgroundColor: '#10b981' },
+                        { label: 'Total Backlog', data: totalData, backgroundColor: '#cbd5e1' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function openTaskModal() {
+            if (!canUserEditActiveRole()) {
+                showCustomAlert("Anda hanya memiliki hak akses untuk menambah task di divisi/jabatan Anda sendiri.");
+                return;
+            }
+            document.getElementById("taskId").value = "";
+            document.getElementById("formTask").reset();
+
+            const noteKepsekField = document.getElementById("inputNoteKepsek");
+            if (currentUser.role === "ALL") {
+                noteKepsekField.removeAttribute("disabled");
+            } else {
+                noteKepsekField.setAttribute("disabled", "true");
+            }
+
+            document.getElementById("modalTaskTitle").innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4 text-indigo-600"></i> TAMBAH SPRINT TASK BARU (${activeTab})`;
+            document.getElementById("modalTask").classList.remove("hidden");
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById("modalTask").classList.add("hidden");
+        }
+
+        function editTask(taskId) {
+            const task = tasksData.find(t => t.id === taskId);
+            if (!task) return;
+
+            if (currentUser.role !== "ALL" && currentUser.role !== task.role) {
+                showCustomAlert("Anda hanya dapat mengedit task pada divisi Anda sendiri.");
+                return;
+            }
+
+            document.getElementById("taskId").value = task.id;
+            document.getElementById("inputAspek").value = task.aspek;
+            document.getElementById("inputProblem").value = task.problem || "";
+            document.getElementById("inputAction").value = task.action;
+            document.getElementById("inputDoD").value = task.dod;
+            document.getElementById("inputPriority").value = task.priority || "Sedang";
+            document.getElementById("inputStoryPoints").value = task.storyPoints || 3;
+            document.getElementById("inputStartDate").value = task.startDate || "";
+            document.getElementById("inputEndDate").value = task.endDate || "";
+            document.getElementById("inputPIC").value = task.pic;
+            document.getElementById("inputStatus").value = task.status;
+            document.getElementById("inputNoteDept").value = task.noteDept || "";
+            document.getElementById("inputNoteKepsek").value = task.noteKepsek || "";
+
+            const noteKepsekField = document.getElementById("inputNoteKepsek");
+            if (currentUser.role === "ALL") {
+                noteKepsekField.removeAttribute("disabled");
+            } else {
+                noteKepsekField.setAttribute("disabled", "true");
+            }
+
+            document.getElementById("modalTaskTitle").innerHTML = `<i data-lucide="edit-3" class="w-4 h-4 text-indigo-600"></i> EDIT SPRINT TASK`;
+            document.getElementById("modalTask").classList.remove("hidden");
+            lucide.createIcons();
+        }
+
+        function saveTask(e) {
+            e.preventDefault();
+            const id = document.getElementById("taskId").value;
+            const endDateVal = document.getElementById("inputEndDate").value;
+            
+            // Auto calculate Pekan from End Date
+            let autoPekan = "Pekan V";
+            if (endDateVal) {
+                const day = new Date(endDateVal).getDate();
+                if (day <= 7) autoPekan = "Pekan I";
+                else if (day <= 14) autoPekan = "Pekan II";
+                else if (day <= 21) autoPekan = "Pekan III";
+                else if (day <= 28) autoPekan = "Pekan IV";
+            }
+
+            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            let autoMonth = document.getElementById("filterBulan").value;
+            if (endDateVal) {
+                autoMonth = monthNames[new Date(endDateVal).getMonth()];
+            }
+
+            const taskPayload = {
+                id: id ? parseInt(id) : Date.now(),
+                role: activeTab,
+                aspek: document.getElementById("inputAspek").value,
+                problem: document.getElementById("inputProblem").value,
+                action: document.getElementById("inputAction").value,
+                dod: document.getElementById("inputDoD").value,
+                priority: document.getElementById("inputPriority").value,
+                storyPoints: parseInt(document.getElementById("inputStoryPoints").value),
+                startDate: document.getElementById("inputStartDate").value,
+                endDate: endDateVal,
+                bulan: autoMonth,
+                pekan: autoPekan,
+                pic: document.getElementById("inputPIC").value,
+                status: document.getElementById("inputStatus").value,
+                noteDept: document.getElementById("inputNoteDept").value,
+                noteKepsek: document.getElementById("inputNoteKepsek").value
+            };
+
+            if (id) {
+                const idx = tasksData.findIndex(t => t.id === parseInt(id));
+                if (idx !== -1) tasksData[idx] = taskPayload;
+            } else {
+                tasksData.push(taskPayload);
+            }
+
+            closeModal();
+            renderAll();
+        }
+
+        function updateStatus(taskId, newStatus) {
+            const task = tasksData.find(t => t.id === taskId);
+            if (task) {
+                task.status = newStatus;
+                renderAll();
+            }
+        }
+
+        function deleteTask(taskId) {
+            const task = tasksData.find(t => t.id === taskId);
+            if (!task) return;
+
+            if (currentUser.role !== "ALL" && currentUser.role !== task.role) {
+                showCustomAlert("Anda hanya dapat menghapus task pada divisi Anda sendiri.");
+                return;
+            }
+
+            showCustomConfirm("Apakah Anda yakin ingin menghapus task ini secara permanen?", function(confirmed) {
+                if (confirmed) {
+                    tasksData = tasksData.filter(t => t.id !== taskId);
+                    renderAll();
+                }
+            });
+        }
+
+        function openUserModal() {
+            if (!currentUser || currentUser.role !== "ALL") {
+                showCustomAlert("Akses ditolak. Fitur ini khusus Pimpinan/Kepsek.");
+                return;
+            }
+            renderUserTable();
+            document.getElementById("modalUsers").classList.remove("hidden");
+        }
+
+        function closeUserModal() {
+            document.getElementById("modalUsers").classList.add("hidden");
+        }
+
+        function renderUserTable() {
+            const tbody = document.getElementById("userTableBody");
+            tbody.innerHTML = usersData.map((u, i) => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-2.5 font-mono font-bold text-indigo-900">${u.username}</td>
+                    <td class="p-2.5 font-medium">${u.name}</td>
+                    <td class="p-2.5"><span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded-full font-bold text-[10px]">${u.role}</span></td>
+                    <td class="p-2.5 font-mono">${u.password}</td>
+                </tr>
+            `).join("");
+        }
+
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+
+            // Dashboard Summary Sheet
+            const dashRows = [
+                ["MATRIKS CAPAIAN KPI & LIKERT 10 JABATAN"],
+                [`Periode: ${document.getElementById("filterBulan").value} - ${document.getElementById("filterPekan").value}`],
+                [],
+                ["NO", "JABATAN / DIVISI", "TOTAL TASK", "DONE", "ON PROGRESS", "READY", "TERLAMBAT", "BACKLOG", "STORY PTS", "LIKERT", "SKOR KPI (%)"]
+            ];
+
+            rolesList.filter(r => r.id !== "DASHBOARD").forEach((r, idx) => {
+                const rTasks = getFilteredTasks(r.id);
+                const calc = calculateProportionalKPI(rTasks);
+                dashRows.push([
+                    idx + 1,
+                    r.name,
+                    rTasks.length,
+                    rTasks.filter(t => t.status === "Done").length,
+                    rTasks.filter(t => t.status === "On Progress").length,
+                    rTasks.filter(t => t.status === "Ready").length,
+                    rTasks.filter(t => checkTaskOverdue(t)).length,
+                    rTasks.filter(t => t.status === "Backlog").length,
+                    calc.totalPts,
+                    calc.likertAvg,
+                    calc.kpiPct + "%"
+                ]);
+            });
+
+            const wsDash = XLSX.utils.aoa_to_sheet(dashRows);
+            XLSX.utils.book_append_sheet(wb, wsDash, "DASHBOARD KPI");
+
+            // Individual Role Sheets
+            rolesList.filter(r => r.id !== "DASHBOARD").forEach(r => {
+                const rTasks = getFilteredTasks(r.id);
+                const roleRows = [
+                    [`BACKLOG BOARD - ${r.name}`],
+                    ["#", "ASPEK BACKLOG", "PROBLEM IDENTIFICATION", "TO DO LIST", "TARGET DoD", "PRIORITAS", "STORY PT", "TGL MULAI", "TGL SELESAI", "PEKAN", "PIC", "STATUS", "CATATAN DEPARTEMEN", "CATATAN KEPSEK"]
+                ];
+
+                rTasks.forEach((t, i) => {
+                    roleRows.push([
+                        i + 1, t.aspek, t.problem, t.action, t.dod, t.priority, t.storyPoints, t.startDate, t.endDate, t.pekan, t.pic, t.status, t.noteDept, t.noteKepsek
+                    ]);
+                });
+
+                const wsRole = XLSX.utils.aoa_to_sheet(roleRows);
+                XLSX.utils.book_append_sheet(wb, wsRole, r.id.substring(0, 31));
+            });
+
+            XLSX.writeFile(wb, `Scrum_KIBS_Kinerja_${document.getElementById("filterBulan").value}.xlsx`);
+        }
+
+        function exportToPDF() {
+            const element = document.getElementById("exportContainer");
+            const opt = {
+                margin: 0.3,
+                filename: `Laporan_Kinerja_KIBS_${document.getElementById("filterBulan").value}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function autoLink(str) {
+            if (!str) return '-';
+            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return str.replace(urlPattern, '<a href="$1" target="_blank" class="text-indigo-600 underline font-semibold hover:text-indigo-800">$1</a>');
+        }
+
+        function getStatusStyle(status) {
+            switch (status) {
+                case 'Done': return 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                case 'On Progress': return 'bg-amber-100 text-amber-800 border-amber-300';
+                case 'Ready': return 'bg-rose-100 text-rose-800 border-rose-300';
+                default: return 'bg-slate-100 text-slate-700 border-slate-300';
+            }
+        }
+
+        function getPriorityStyle(priority) {
+            switch (priority) {
+                case 'Tinggi': return 'bg-rose-100 text-rose-700 border border-rose-200';
+                case 'Sedang': return 'bg-amber-100 text-amber-700 border border-amber-200';
+                case 'Rendah': return 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+                default: return 'bg-slate-100 text-slate-700';
+            }
+        }
+
+        window.onload = function() {
+            // Default login state for demo testing
+            currentUser = usersData[0]; // Admin default
+            updateUIForUser();
+            renderAll();
+        };
+    </script>
+</body>
+</html>
